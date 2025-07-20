@@ -3,13 +3,13 @@ import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { Link as ScrollLink } from 'react-scroll';
 import { FiMenu, FiX } from 'react-icons/fi';
 import {
-  FaHome, FaConciergeBell, FaMoneyBillWave, FaUserTie, FaEnvelopeOpenText
-} from 'react-icons/fa';
+  FaHome, FaCogs, FaMoneyBillWave, FaUserTie, FaEnvelopeOpenText
+} from 'react-icons/fa'; // Updated: FaConciergeBell → FaCogs
 
 const navLinks = [
   { name: 'Home', to: 'home', icon: <FaHome /> },
   { name: 'About', to: 'about', icon: <FaUserTie /> },
-  { name: 'Services', to: 'services', icon: <FaConciergeBell /> },
+  { name: 'Services', to: 'services', icon: <FaCogs /> }, // 👈 Updated icon
   { name: 'Pricing', to: 'pricing', icon: <FaMoneyBillWave /> },
   { name: 'Contact', to: 'contact', icon: <FaEnvelopeOpenText /> },
 ];
@@ -62,8 +62,6 @@ const Navbar = () => {
                 >
                   <span className="text-lg group-hover:scale-110 transition-transform duration-200">{link.icon}</span>
                   {link.name}
-
-                  {/* Underline animation */}
                   <motion.span
                     layoutId="underline"
                     className={`absolute bottom-0 left-4 right-4 h-[2px] rounded-full ${
@@ -96,13 +94,14 @@ const Navbar = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden w-full flex flex-col gap-4 px-6 py-6 text-white font-medium text-base text-center bg-gradient-to-b from-[#0D1117] via-[#12151c] to-[#0D1117] shadow-xl rounded-b-2xl"
+            className="md:hidden w-full flex flex-col items-center justify-center gap-3 px-6 py-6 text-white font-medium text-base text-center bg-gradient-to-b from-[#0D1117] via-[#12151c] to-[#0D1117] shadow-xl rounded-b-2xl"
           >
             {navLinks.map((link) => (
               <motion.li
                 key={link.name}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                className={`w-full max-w-xs flex justify-center`}
               >
                 <ScrollLink
                   to={link.to}
@@ -114,14 +113,14 @@ const Navbar = () => {
                     setActive(link.to);
                     closeMenu();
                   }}
-                  className={`block py-3 px-4 rounded-xl items-center justify-center gap-2 transition-all duration-300 ${
+                  className={`flex items-center justify-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-300 ${
                     active === link.to
                       ? 'bg-gradient-to-r from-[#58A6FF] via-[#9B5DE5] to-[#FF6EC4] text-white shadow-md'
                       : 'hover:text-primary hover:bg-white/10 text-gray-300'
                   }`}
                 >
-                  {link.icon}
-                  {link.name}
+                  <span className="text-lg">{link.icon}</span>
+                  <span className="text-base font-medium">{link.name}</span>
                 </ScrollLink>
               </motion.li>
             ))}
