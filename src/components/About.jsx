@@ -78,7 +78,7 @@ const About = () => {
           <span className="font-bold bg-gradient-to-r from-[#58A6FF] via-[#9B5DE5] to-[#FF6EC4] text-transparent bg-clip-text">
             Vearnify
           </span>{' '}
-          crafts mission-driven digital products that fuse strategy, design, and engineering — purpose-built to scale your vision with confidence.
+          crafts mission driven digital products that fuse strategy, design, and engineering purpose built to scale your vision with confidence.
         </motion.p>
 
         {/* Features */}
@@ -120,7 +120,7 @@ const About = () => {
           {highlights.map((highlight, idx) => (
             <div
               key={idx}
-              className={`flex items-start gap-4 bg-[#0D1117]/70 p-6 rounded-xl border ${highlight.border} hover:shadow-[0_0_25px] hover:shadow-current transition duration-300`}
+              className={`flex items-start gap-4 bg-[#0D1117]/10 p-6 rounded-xl border ${highlight.border} hover:shadow-[0_0_25px] hover:shadow-current transition duration-300`}
             >
               <div className="mt-1">{highlight.icon}</div>
               <div>
