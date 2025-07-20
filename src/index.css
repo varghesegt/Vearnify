@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* -----------------------------------
+   🌐 Global Styling Enhancements
+----------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+  background-color: #0D1117;
+  color: #E6EDF3;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+/* -----------------------------------
+   ✨ Text Selection (No Blue Highlight)
+----------------------------------- */
+
+/* Chrome, Safari, Edge */
+/* Override all browser selection styles */
+::selection,
+::-moz-selection {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+
+
+/* Firefox */
+::-moz-selection {
+  background-color: #ffffff !important;
+  color: #0D1117 !important;
+}
+
+/* -----------------------------------
+   🔲 Focus Outline (Accessibility)
+----------------------------------- */
+:focus-visible {
+  outline: 2px solid #ff58cd;
+  outline-offset: 2px;
+  transition: outline 0.2s ease-in-out;
+}
+
+/* -----------------------------------
+   🖱️ Custom Scrollbar (Advanced)
+----------------------------------- */
+
+/* Chrome/Edge/Opera */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #58A6FF, #9B5DE5);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #9B5DE5, #58A6FF);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #58A6FF transparent;
+}
+
+/* -----------------------------------
+   🔗 Link & Anchor Hover Effects
+----------------------------------- */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: #58A6FF;
+  filter: brightness(120%);
+}
+
+/* -----------------------------------
+   🚀 Floating CTA Button
+----------------------------------- */
+.floating-btn {
+  background: linear-gradient(135deg, #58A6FF, #9B5DE5);
+  color: #0D1117;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 8px 30px rgba(88, 166, 255, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 10px 40px rgba(155, 93, 229, 0.4);
+}
+
+/* -----------------------------------
+   🧘 Motion-Safe Fallbacks
+----------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
