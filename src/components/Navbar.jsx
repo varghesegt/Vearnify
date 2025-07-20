@@ -114,7 +114,7 @@ const Navbar = () => {
                     setActive(link.to);
                     closeMenu();
                   }}
-                  className={`block py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 ${
+                  className={`block py-3 px-4 rounded-xl items-center justify-center gap-2 transition-all duration-300 ${
                     active === link.to
                       ? 'bg-gradient-to-r from-[#58A6FF] via-[#9B5DE5] to-[#FF6EC4] text-white shadow-md'
                       : 'hover:text-primary hover:bg-white/10 text-gray-300'
