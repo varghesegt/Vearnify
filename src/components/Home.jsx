@@ -19,7 +19,7 @@ const Home = () => {
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
-        className="relative z-10 text-center w-full max-w-[92vw] sm:max-w-[90vw] md:max-w-3xl px-4 sm:px-6 py-8 sm:py-12 bg-[#0D1117]/60 backdrop-blur-lg rounded-3xl border border-[#21262D] shadow-[0_0_60px_#58A6FF30]"
+        className="relative z-10 text-center w-full max-w-[92vw] sm:max-w-[90vw] md:max-w-3xl px-4 sm:px-6 py-8 sm:py-12 bg-[#0D1117]/10 backdrop-lg rounded-3xl border border-[#21262D] shadow-[0_0_60px_#58A6FF30]"
       >
         {/* Title */}
         <h1 className="text-[clamp(1.7rem,5vw,3rem)] font-extrabold leading-tight mb-4 font-poppins text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.1)]">
