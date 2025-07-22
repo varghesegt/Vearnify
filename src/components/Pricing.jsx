@@ -145,25 +145,36 @@ const Pricing = () => {
   const sliderRef = useRef(null);
   let index = 0;
 
-  useEffect(() => {
+ useEffect(() => {
   const slider = sliderRef.current;
   let scrollInterval;
   let resumeTimeout;
   let index = 0;
   let isPaused = false;
 
+  const getCardWidth = () => {
+    const firstCard = slider?.children?.[0];
+    return firstCard ? firstCard.offsetWidth + 24 : 0; // 24 = gap between cards
+  };
+
+  const scrollToIndex = (i) => {
+    const cardWidth = getCardWidth();
+    slider.scrollTo({
+      left: i * cardWidth,
+      behavior: "smooth",
+    });
+  };
+
   const startAutoScroll = () => {
     scrollInterval = setInterval(() => {
       if (!isPaused && slider) {
-        const cardWidth = slider.children[0].offsetWidth + 24;
+        const cardWidth = getCardWidth();
         const visibleCards = Math.floor(slider.offsetWidth / cardWidth);
-        index = (index + 1) % (plans.length - visibleCards + 1);
-        slider.scrollTo({
-          left: index * cardWidth,
-          behavior: "smooth",
-        });
+        const maxIndex = plans.length - visibleCards;
+        index = (index + 1) > maxIndex ? 0 : index + 1;
+        scrollToIndex(index);
       }
-    }, 6000); // auto scroll every 6s
+    }, 6000); // every 6s
   };
 
   const pauseAutoScroll = () => {
@@ -174,70 +185,87 @@ const Pricing = () => {
     resumeTimeout = setTimeout(() => {
       isPaused = false;
       startAutoScroll();
-    }, 7000); // resume auto scroll after 7s
+    }, 7000); // resume after 7s
   };
 
+  // Start scrolling
   startAutoScroll();
 
-  // 👇 Detect card clicks
-  const handleClick = () => {
-    pauseAutoScroll();
-  };
+  // 👉 Click or drag = pause auto scroll
+  const handleClick = () => pauseAutoScroll();
   slider.addEventListener("click", handleClick);
 
-  // 👇 Optional: Drag-to-scroll logic (no hand cursor)
-  let isDown = false;
-  let startX;
-  let scrollLeft;
+  // 👉 Drag scroll with perfect card alignment
+  let isDragging = false;
+  let startX = 0;
+  let scrollLeft = 0;
 
-  const mouseDown = (e) => {
-    isDown = true;
+  const onMouseDown = (e) => {
+    isDragging = true;
     startX = e.pageX - slider.offsetLeft;
     scrollLeft = slider.scrollLeft;
+    pauseAutoScroll();
   };
 
-  const mouseLeave = () => {
-    isDown = false;
+  const onMouseUp = () => {
+    if (!isDragging) return;
+    isDragging = false;
+
+    const cardWidth = getCardWidth();
+    const newIndex = Math.round(slider.scrollLeft / cardWidth);
+    index = newIndex;
+    scrollToIndex(newIndex); // snap to nearest card
   };
 
-  const mouseUp = () => {
-    isDown = false;
-  };
-
-  const mouseMove = (e) => {
-    if (!isDown) return;
+  const onMouseMove = (e) => {
+    if (!isDragging) return;
     e.preventDefault();
     const x = e.pageX - slider.offsetLeft;
     const walk = (x - startX) * 1.5;
     slider.scrollLeft = scrollLeft - walk;
   };
 
-  const wheelScroll = (e) => {
+  const onMouseLeave = () => {
+    if (isDragging) onMouseUp();
+    isDragging = false;
+  };
+
+  // 👉 Wheel scroll with smooth snapping
+  const onWheel = (e) => {
     if (e.deltaY !== 0) {
       e.preventDefault();
-      slider.scrollLeft += e.deltaY;
+      pauseAutoScroll();
+
+      const cardWidth = getCardWidth();
+      const direction = e.deltaY > 0 ? 1 : -1;
+      const visibleCards = Math.floor(slider.offsetWidth / cardWidth);
+      const maxIndex = plans.length - visibleCards;
+
+      index = Math.min(Math.max(index + direction, 0), maxIndex);
+      scrollToIndex(index);
     }
   };
 
-  // 🔁 Add event listeners
-  slider.addEventListener("mousedown", mouseDown);
-  slider.addEventListener("mouseleave", mouseLeave);
-  slider.addEventListener("mouseup", mouseUp);
-  slider.addEventListener("mousemove", mouseMove);
-  slider.addEventListener("wheel", wheelScroll);
+  // 👉 Add all listeners
+  slider.addEventListener("mousedown", onMouseDown);
+  slider.addEventListener("mousemove", onMouseMove);
+  slider.addEventListener("mouseup", onMouseUp);
+  slider.addEventListener("mouseleave", onMouseLeave);
+  slider.addEventListener("wheel", onWheel, { passive: false });
 
-  // ✅ Cleanup
+  // ✅ Clean up
   return () => {
     clearInterval(scrollInterval);
     clearTimeout(resumeTimeout);
     slider.removeEventListener("click", handleClick);
-    slider.removeEventListener("mousedown", mouseDown);
-    slider.removeEventListener("mouseleave", mouseLeave);
-    slider.removeEventListener("mouseup", mouseUp);
-    slider.removeEventListener("mousemove", mouseMove);
-    slider.removeEventListener("wheel", wheelScroll);
+    slider.removeEventListener("mousedown", onMouseDown);
+    slider.removeEventListener("mousemove", onMouseMove);
+    slider.removeEventListener("mouseup", onMouseUp);
+    slider.removeEventListener("mouseleave", onMouseLeave);
+    slider.removeEventListener("wheel", onWheel);
   };
 }, []);
+
 
 
   return (
