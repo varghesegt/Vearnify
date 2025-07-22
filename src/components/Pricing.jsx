@@ -126,6 +126,7 @@ const addons = [
   "Content Upload & Alignment – ₹1,499",
 ];
 
+
 const getBadgeStyle = (type) => {
   switch (type) {
     case "basic":
@@ -145,31 +146,78 @@ const Pricing = () => {
   let index = 0;
 
   useEffect(() => {
+    const slider = sliderRef.current;
+
+    // Autoplay Scroll
     const interval = setInterval(() => {
-      if (sliderRef.current) {
-        const scrollWidth = sliderRef.current.scrollWidth;
-        const cardWidth = sliderRef.current.children[0].offsetWidth + 24; // +gap
-        const visibleCards = Math.floor(sliderRef.current.offsetWidth / cardWidth);
+      if (slider) {
+        const scrollWidth = slider.scrollWidth;
+        const cardWidth = slider.children[0].offsetWidth + 24;
+        const visibleCards = Math.floor(slider.offsetWidth / cardWidth);
         index = (index + 1) % (plans.length - visibleCards + 1);
-        sliderRef.current.scrollTo({
+        slider.scrollTo({
           left: index * cardWidth,
           behavior: "smooth",
         });
       }
     }, 4000);
-    return () => clearInterval(interval);
+
+    // Drag-to-scroll
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    const mouseDown = (e) => {
+      isDown = true;
+      slider.classList.add("cursor-grabbing");
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    };
+
+    const mouseLeave = () => {
+      isDown = false;
+      slider.classList.remove("cursor-grabbing");
+    };
+
+    const mouseUp = () => {
+      isDown = false;
+      slider.classList.remove("cursor-grabbing");
+    };
+
+    const mouseMove = (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      slider.scrollLeft = scrollLeft - walk;
+    };
+
+    const wheelScroll = (e) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        slider.scrollLeft += e.deltaY;
+      }
+    };
+
+    slider.addEventListener("mousedown", mouseDown);
+    slider.addEventListener("mouseleave", mouseLeave);
+    slider.addEventListener("mouseup", mouseUp);
+    slider.addEventListener("mousemove", mouseMove);
+    slider.addEventListener("wheel", wheelScroll);
+
+    return () => {
+      clearInterval(interval);
+      slider.removeEventListener("mousedown", mouseDown);
+      slider.removeEventListener("mouseleave", mouseLeave);
+      slider.removeEventListener("mouseup", mouseUp);
+      slider.removeEventListener("mousemove", mouseMove);
+      slider.removeEventListener("wheel", wheelScroll);
+    };
   }, []);
 
   return (
-    <section
-      id="pricing"
-      className="relative text-[#E6EDF3] py-20 px-4 sm:px-6 overflow-hidden"
-    >
-      <img
-        src={pricingBg}
-        alt="Pricing Background"
-        className="absolute inset-0 w-full h-full object-cover opacity-30 z-0"
-      />
+    <section id="pricing" className="relative text-[#E6EDF3] py-20 px-4 sm:px-6 overflow-hidden">
+      <img src={pricingBg} alt="Pricing Background" className="absolute inset-0 w-full h-full object-cover opacity-30 z-0" />
       <div className="absolute inset-0 bg-[#0D1117]/10 backdrop-blur-sm z-0" />
 
       <div className="relative z-10 max-w-7xl mx-auto text-center">
@@ -180,24 +228,19 @@ const Pricing = () => {
           Select the perfect <span className="text-transparent bg-gradient-to-r from-[#58A6FF] to-[#9B5DE5] bg-clip-text font-semibold">website plan</span> to boost your business, convert leads, and go digital.
         </p>
 
-        {/* Horizontally Scrollable Cards */}
         <div
           ref={sliderRef}
-          className="flex gap-6 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide"
+          className="flex gap-6 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide cursor-grab select-none"
         >
           {plans.map((plan, idx) => (
             <div
               key={idx}
               className={`min-w-[90%] sm:min-w-[350px] flex flex-col justify-between h-[580px] sm:h-[600px] snap-center relative border rounded-2xl p-6 transition duration-300 shadow-xl hover:shadow-blue-500/30 bg-[#808b9c00] backdrop-blur-md overflow-hidden ${
-                plan.badge === "elite"
-                  ? "border-[#FF6EC4] ring-2 ring-[#FF6EC4]"
-                  : "border-[#21262D]"
+                plan.badge === "elite" ? "border-[#FF6EC4] ring-2 ring-[#FF6EC4]" : "border-[#21262D]"
               }`}
             >
               <div>
-                <div
-                  className={`absolute top-0 left-0 text-white text-xs font-semibold px-3 py-1 rounded-br-xl flex items-center gap-1 ${getBadgeStyle(plan.badge)}`}
-                >
+                <div className={`absolute top-0 left-0 text-white text-xs font-semibold px-3 py-1 rounded-br-xl flex items-center gap-1 ${getBadgeStyle(plan.badge)}`}>
                   {plan.badge === "elite" && <FaCrown className="text-yellow-300" />}
                   {plan.badge.charAt(0).toUpperCase() + plan.badge.slice(1)}
                 </div>
@@ -222,7 +265,6 @@ const Pricing = () => {
                 </ul>
               </div>
 
-              {/* Button aligned at bottom */}
               <a
                 href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(plan.wpMessage)}`}
                 target="_blank"
