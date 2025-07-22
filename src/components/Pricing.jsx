@@ -160,7 +160,7 @@ const Pricing = () => {
           behavior: "smooth",
         });
       }
-    }, 4000);
+    }, 6000);
 
     // Drag-to-scroll
     let isDown = false;
