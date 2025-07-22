@@ -103,10 +103,10 @@ const plans = [
       "5 Premium Pages: Home, About, Services, Reviews, Contact",
       "Digital & Printable Brochures / QR Menus",
       "Full SEO + Core Web Speed Optimization",
-      "Integrated Lead Forms (Email + Sheets)",
+      "Integrated Lead Forms",
       "1 Monthly Content Update + Priority Support",
       "Custom UI Icons & Web Animations",
-      "Premium Hosting with Global CDN",
+      "Premium Hosting CDN",
       "Social Media Share Links Included",
     ],
     wpMessage:
