@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import pricingBg from "../assets/pricing.jpg";
 import { FaCheckCircle, FaCrown } from "react-icons/fa";
 
@@ -141,6 +141,24 @@ const getBadgeStyle = (type) => {
 
 const Pricing = () => {
   const whatsapp = "917871844464";
+  const sliderRef = useRef(null);
+  let index = 0;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (sliderRef.current) {
+        const scrollWidth = sliderRef.current.scrollWidth;
+        const cardWidth = sliderRef.current.children[0].offsetWidth + 24; // +gap
+        const visibleCards = Math.floor(sliderRef.current.offsetWidth / cardWidth);
+        index = (index + 1) % (plans.length - visibleCards + 1);
+        sliderRef.current.scrollTo({
+          left: index * cardWidth,
+          behavior: "smooth",
+        });
+      }
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section
@@ -152,22 +170,25 @@ const Pricing = () => {
         alt="Pricing Background"
         className="absolute inset-0 w-full h-full object-cover opacity-30 z-0"
       />
-      <div className="absolute inset-0 bg-[#0D1117]/30 backdrop-blur-sm z-0" />
+      <div className="absolute inset-0 bg-[#0D1117]/10 backdrop-blur-sm z-0" />
 
       <div className="relative z-10 max-w-7xl mx-auto text-center">
         <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-transparent bg-gradient-to-r from-[#58A6FF] via-[#9B5DE5] to-[#FF6EC4] bg-clip-text">
           Smart Plans. Real Results. Zero Guesswork.
-
         </h2>
         <p className="text-white mb-10 max-w-2xl mx-auto text-sm sm:text-base">
           Select the perfect <span className="text-transparent bg-gradient-to-r from-[#58A6FF] to-[#9B5DE5] bg-clip-text font-semibold">website plan</span> to boost your business, convert leads, and go digital.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+        {/* Horizontally Scrollable Cards */}
+        <div
+          ref={sliderRef}
+          className="flex gap-6 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide"
+        >
           {plans.map((plan, idx) => (
             <div
               key={idx}
-              className={`flex flex-col justify-between h-full relative border rounded-2xl p-6 transition duration-300 shadow-lg hover:shadow-blue-500/30 bg-[#161B22]/ backdrop-blur-md overflow-hidden ${
+              className={`min-w-[90%] sm:min-w-[350px] flex flex-col justify-between h-[580px] sm:h-[600px] snap-center relative border rounded-2xl p-6 transition duration-300 shadow-xl hover:shadow-blue-500/30 bg-[#808b9c00] backdrop-blur-md overflow-hidden ${
                 plan.badge === "elite"
                   ? "border-[#FF6EC4] ring-2 ring-[#FF6EC4]"
                   : "border-[#21262D]"
@@ -201,6 +222,7 @@ const Pricing = () => {
                 </ul>
               </div>
 
+              {/* Button aligned at bottom */}
               <a
                 href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(plan.wpMessage)}`}
                 target="_blank"
@@ -213,6 +235,7 @@ const Pricing = () => {
           ))}
         </div>
 
+        {/* Add-ons Section */}
         <div className="mt-20 max-w-4xl mx-auto">
           <div className="bg-[#161B22]/10 backdrop-md border border-[#30363D] rounded-2xl shadow-xl p-8 text-left">
             <h3 className="text-3xl font-extrabold text-center mb-4 text-transparent bg-gradient-to-r from-[#58A6FF] via-[#9B5DE5] to-[#FF6EC4] bg-clip-text">

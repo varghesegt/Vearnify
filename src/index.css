@@ -71,6 +71,17 @@ body {
   background: linear-gradient(135deg, #9B5DE5, #58A6FF);
 }
 
+/* 👇 Add this to your CSS */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;    /* Firefox */
+}
+
+
 /* Firefox */
 * {
   scrollbar-width: thin;

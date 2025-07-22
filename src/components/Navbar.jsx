@@ -3,13 +3,17 @@ import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { Link as ScrollLink } from 'react-scroll';
 import { FiMenu, FiX } from 'react-icons/fi';
 import {
-  FaHome, FaCogs, FaMoneyBillWave, FaUserTie, FaEnvelopeOpenText
-} from 'react-icons/fa'; // Updated: FaConciergeBell → FaCogs
+  FaHome,
+  FaTools, // ✅ Changed Services Icon
+  FaMoneyBillWave,
+  FaUserTie,
+  FaEnvelopeOpenText
+} from 'react-icons/fa';
 
 const navLinks = [
   { name: 'Home', to: 'home', icon: <FaHome /> },
   { name: 'About', to: 'about', icon: <FaUserTie /> },
-  { name: 'Services', to: 'services', icon: <FaCogs /> }, // 👈 Updated icon
+  { name: 'Services', to: 'services', icon: <FaTools /> }, // ✅ Updated icon here
   { name: 'Pricing', to: 'pricing', icon: <FaMoneyBillWave /> },
   { name: 'Contact', to: 'contact', icon: <FaEnvelopeOpenText /> },
 ];
@@ -94,14 +98,13 @@ const Navbar = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden w-full flex flex-col items-center justify-center gap-3 px-6 py-6 text-white font-medium text-base text-center bg-gradient-to-b from-[#0D1117] via-[#12151c] to-[#0D1117] shadow-xl rounded-b-2xl"
+            className="md:hidden w-full flex flex-col gap-4 px-6 py-6 text-white font-medium text-base text-center bg-gradient-to-b from-[#0D1117] via-[#12151c] to-[#0D1117] shadow-xl rounded-b-2xl"
           >
             {navLinks.map((link) => (
               <motion.li
                 key={link.name}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`w-full max-w-xs flex justify-center`}
               >
                 <ScrollLink
                   to={link.to}
@@ -113,14 +116,14 @@ const Navbar = () => {
                     setActive(link.to);
                     closeMenu();
                   }}
-                  className={`flex items-center justify-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-300 ${
+                  className={`block py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 ${
                     active === link.to
                       ? 'bg-gradient-to-r from-[#58A6FF] via-[#9B5DE5] to-[#FF6EC4] text-white shadow-md'
                       : 'hover:text-primary hover:bg-white/10 text-gray-300'
                   }`}
                 >
-                  <span className="text-lg">{link.icon}</span>
-                  <span className="text-base font-medium">{link.name}</span>
+                  {link.icon}
+                  {link.name}
                 </ScrollLink>
               </motion.li>
             ))}
