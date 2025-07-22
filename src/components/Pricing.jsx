@@ -146,12 +146,15 @@ const Pricing = () => {
   let index = 0;
 
   useEffect(() => {
-    const slider = sliderRef.current;
+  const slider = sliderRef.current;
+  let scrollInterval;
+  let resumeTimeout;
+  let index = 0;
+  let isPaused = false;
 
-    // Autoplay Scroll
-    const interval = setInterval(() => {
-      if (slider) {
-        const scrollWidth = slider.scrollWidth;
+  const startAutoScroll = () => {
+    scrollInterval = setInterval(() => {
+      if (!isPaused && slider) {
         const cardWidth = slider.children[0].offsetWidth + 24;
         const visibleCards = Math.floor(slider.offsetWidth / cardWidth);
         index = (index + 1) % (plans.length - visibleCards + 1);
@@ -160,60 +163,82 @@ const Pricing = () => {
           behavior: "smooth",
         });
       }
-    }, 6000);
+    }, 6000); // auto scroll every 6s
+  };
 
-    // Drag-to-scroll
-    let isDown = false;
-    let startX;
-    let scrollLeft;
+  const pauseAutoScroll = () => {
+    isPaused = true;
+    clearInterval(scrollInterval);
+    clearTimeout(resumeTimeout);
 
-    const mouseDown = (e) => {
-      isDown = true;
-      slider.classList.add("cursor-grabbing");
-      startX = e.pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-    };
+    resumeTimeout = setTimeout(() => {
+      isPaused = false;
+      startAutoScroll();
+    }, 7000); // resume auto scroll after 7s
+  };
 
-    const mouseLeave = () => {
-      isDown = false;
-      slider.classList.remove("cursor-grabbing");
-    };
+  startAutoScroll();
 
-    const mouseUp = () => {
-      isDown = false;
-      slider.classList.remove("cursor-grabbing");
-    };
+  // 👇 Detect card clicks
+  const handleClick = () => {
+    pauseAutoScroll();
+  };
+  slider.addEventListener("click", handleClick);
 
-    const mouseMove = (e) => {
-      if (!isDown) return;
+  // 👇 Optional: Drag-to-scroll logic (no hand cursor)
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+
+  const mouseDown = (e) => {
+    isDown = true;
+    startX = e.pageX - slider.offsetLeft;
+    scrollLeft = slider.scrollLeft;
+  };
+
+  const mouseLeave = () => {
+    isDown = false;
+  };
+
+  const mouseUp = () => {
+    isDown = false;
+  };
+
+  const mouseMove = (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - slider.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    slider.scrollLeft = scrollLeft - walk;
+  };
+
+  const wheelScroll = (e) => {
+    if (e.deltaY !== 0) {
       e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
-      const walk = (x - startX) * 1.5;
-      slider.scrollLeft = scrollLeft - walk;
-    };
+      slider.scrollLeft += e.deltaY;
+    }
+  };
 
-    const wheelScroll = (e) => {
-      if (e.deltaY !== 0) {
-        e.preventDefault();
-        slider.scrollLeft += e.deltaY;
-      }
-    };
+  // 🔁 Add event listeners
+  slider.addEventListener("mousedown", mouseDown);
+  slider.addEventListener("mouseleave", mouseLeave);
+  slider.addEventListener("mouseup", mouseUp);
+  slider.addEventListener("mousemove", mouseMove);
+  slider.addEventListener("wheel", wheelScroll);
 
-    slider.addEventListener("mousedown", mouseDown);
-    slider.addEventListener("mouseleave", mouseLeave);
-    slider.addEventListener("mouseup", mouseUp);
-    slider.addEventListener("mousemove", mouseMove);
-    slider.addEventListener("wheel", wheelScroll);
+  // ✅ Cleanup
+  return () => {
+    clearInterval(scrollInterval);
+    clearTimeout(resumeTimeout);
+    slider.removeEventListener("click", handleClick);
+    slider.removeEventListener("mousedown", mouseDown);
+    slider.removeEventListener("mouseleave", mouseLeave);
+    slider.removeEventListener("mouseup", mouseUp);
+    slider.removeEventListener("mousemove", mouseMove);
+    slider.removeEventListener("wheel", wheelScroll);
+  };
+}, []);
 
-    return () => {
-      clearInterval(interval);
-      slider.removeEventListener("mousedown", mouseDown);
-      slider.removeEventListener("mouseleave", mouseLeave);
-      slider.removeEventListener("mouseup", mouseUp);
-      slider.removeEventListener("mousemove", mouseMove);
-      slider.removeEventListener("wheel", wheelScroll);
-    };
-  }, []);
 
   return (
     <section id="pricing" className="relative text-[#E6EDF3] py-20 px-4 sm:px-6 overflow-hidden">
