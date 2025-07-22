@@ -273,7 +273,7 @@ const Pricing = () => {
           {plans.map((plan, idx) => (
             <div
               key={idx}
-              className={`min-w-[90%] sm:min-w-[350px] flex flex-col justify-between h-[580px] sm:h-[600px] snap-center relative border rounded-2xl p-6 transition duration-300 shadow-xl hover:shadow-blue-500/30 bg-[#808b9c00] backdrop-blur-md overflow-hidden ${
+              className={`min-w-[90%] sm:min-w-[350px] flex flex-col justify-between h-[580px] sm:h-[600px] snap-center relative border rounded-2xl p-6 transition duration-500 shadow-xl hover:shadow-blue-500/30 bg-[#808b9c00] backdrop-blur-md overflow-hidden ${
                 plan.badge === "elite" ? "border-[#FF6EC4] ring-2 ring-[#FF6EC4]" : "border-[#21262D]"
               }`}
             >
