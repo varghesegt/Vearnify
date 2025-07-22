@@ -146,74 +146,94 @@ const Pricing = () => {
   let index = 0;
 
   useEffect(() => {
-    const slider = sliderRef.current;
+  const slider = sliderRef.current;
+  if (!slider) return;
 
-    // Autoplay Scroll
-    const interval = setInterval(() => {
-      if (slider) {
-        const scrollWidth = slider.scrollWidth;
+  let index = 0;
+  let isInteracting = false;
+  let scrollInterval;
+
+  const startAutoScroll = () => {
+    scrollInterval = setInterval(() => {
+      if (!isInteracting && slider) {
         const cardWidth = slider.children[0].offsetWidth + 24;
         const visibleCards = Math.floor(slider.offsetWidth / cardWidth);
         index = (index + 1) % (plans.length - visibleCards + 1);
-        slider.scrollTo({
-          left: index * cardWidth,
-          behavior: "smooth",
-        });
+        slider.scrollTo({ left: index * cardWidth, behavior: "smooth" });
       }
     }, 4000);
+  };
 
-    // Drag-to-scroll
-    let isDown = false;
-    let startX;
-    let scrollLeft;
+  const stopAutoScroll = () => clearInterval(scrollInterval);
 
-    const mouseDown = (e) => {
-      isDown = true;
-      slider.classList.add("cursor-grabbing");
-      startX = e.pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-    };
+  // Drag to scroll
+  let isDown = false;
+  let startX;
+  let scrollLeft;
 
-    const mouseLeave = () => {
-      isDown = false;
-      slider.classList.remove("cursor-grabbing");
-    };
+  const handleStart = (e) => {
+    isDown = true;
+    isInteracting = true;
+    slider.classList.add("cursor-grabbing");
+    startX = (e.touches ? e.touches[0].pageX : e.pageX) - slider.offsetLeft;
+    scrollLeft = slider.scrollLeft;
+    stopAutoScroll();
+  };
 
-    const mouseUp = () => {
-      isDown = false;
-      slider.classList.remove("cursor-grabbing");
-    };
+  const handleMove = (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = (e.touches ? e.touches[0].pageX : e.pageX) - slider.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    slider.scrollLeft = scrollLeft - walk;
+  };
 
-    const mouseMove = (e) => {
-      if (!isDown) return;
+  const handleEnd = () => {
+    isDown = false;
+    slider.classList.remove("cursor-grabbing");
+    setTimeout(() => {
+      isInteracting = false;
+    }, 1000); // Delay to prevent immediate resume
+    startAutoScroll();
+  };
+
+  const handleWheel = (e) => {
+    if (e.deltaY !== 0) {
       e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
-      const walk = (x - startX) * 1.5;
-      slider.scrollLeft = scrollLeft - walk;
-    };
+      slider.scrollLeft += e.deltaY;
+      isInteracting = true;
+      stopAutoScroll();
+      setTimeout(() => {
+        isInteracting = false;
+        startAutoScroll();
+      }, 1000);
+    }
+  };
 
-    const wheelScroll = (e) => {
-      if (e.deltaY !== 0) {
-        e.preventDefault();
-        slider.scrollLeft += e.deltaY;
-      }
-    };
+  // Add listeners
+  slider.addEventListener("mousedown", handleStart);
+  slider.addEventListener("touchstart", handleStart);
+  slider.addEventListener("mousemove", handleMove);
+  slider.addEventListener("touchmove", handleMove);
+  slider.addEventListener("mouseup", handleEnd);
+  slider.addEventListener("touchend", handleEnd);
+  slider.addEventListener("mouseleave", handleEnd);
+  slider.addEventListener("wheel", handleWheel, { passive: false });
 
-    slider.addEventListener("mousedown", mouseDown);
-    slider.addEventListener("mouseleave", mouseLeave);
-    slider.addEventListener("mouseup", mouseUp);
-    slider.addEventListener("mousemove", mouseMove);
-    slider.addEventListener("wheel", wheelScroll);
+  startAutoScroll();
 
-    return () => {
-      clearInterval(interval);
-      slider.removeEventListener("mousedown", mouseDown);
-      slider.removeEventListener("mouseleave", mouseLeave);
-      slider.removeEventListener("mouseup", mouseUp);
-      slider.removeEventListener("mousemove", mouseMove);
-      slider.removeEventListener("wheel", wheelScroll);
-    };
-  }, []);
+  return () => {
+    stopAutoScroll();
+    slider.removeEventListener("mousedown", handleStart);
+    slider.removeEventListener("touchstart", handleStart);
+    slider.removeEventListener("mousemove", handleMove);
+    slider.removeEventListener("touchmove", handleMove);
+    slider.removeEventListener("mouseup", handleEnd);
+    slider.removeEventListener("touchend", handleEnd);
+    slider.removeEventListener("mouseleave", handleEnd);
+    slider.removeEventListener("wheel", handleWheel);
+  };
+}, []);
 
   return (
     <section id="pricing" className="relative text-[#E6EDF3] py-20 px-4 sm:px-6 overflow-hidden">
