@@ -103,10 +103,10 @@ const plans = [
       "5 Premium Pages: Home, About, Services, Reviews, Contact",
       "Digital & Printable Brochures / QR Menus",
       "Full SEO + Core Web Speed Optimization",
-      "Integrated Lead Forms",
+      "Integrated Lead Forms (Email + Sheets)",
       "1 Monthly Content Update + Priority Support",
       "Custom UI Icons & Web Animations",
-      "Premium Hosting withCDN",
+      "Premium Hosting with Global CDN",
       "Social Media Share Links Included",
     ],
     wpMessage:
@@ -146,94 +146,74 @@ const Pricing = () => {
   let index = 0;
 
   useEffect(() => {
-  const slider = sliderRef.current;
-  if (!slider) return;
+    const slider = sliderRef.current;
 
-  let index = 0;
-  let isInteracting = false;
-  let scrollInterval;
-
-  const startAutoScroll = () => {
-    scrollInterval = setInterval(() => {
-      if (!isInteracting && slider) {
+    // Autoplay Scroll
+    const interval = setInterval(() => {
+      if (slider) {
+        const scrollWidth = slider.scrollWidth;
         const cardWidth = slider.children[0].offsetWidth + 24;
         const visibleCards = Math.floor(slider.offsetWidth / cardWidth);
         index = (index + 1) % (plans.length - visibleCards + 1);
-        slider.scrollTo({ left: index * cardWidth, behavior: "smooth" });
+        slider.scrollTo({
+          left: index * cardWidth,
+          behavior: "smooth",
+        });
       }
     }, 4000);
-  };
 
-  const stopAutoScroll = () => clearInterval(scrollInterval);
+    // Drag-to-scroll
+    let isDown = false;
+    let startX;
+    let scrollLeft;
 
-  // Drag to scroll
-  let isDown = false;
-  let startX;
-  let scrollLeft;
+    const mouseDown = (e) => {
+      isDown = true;
+      slider.classList.add("cursor-grabbing");
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    };
 
-  const handleStart = (e) => {
-    isDown = true;
-    isInteracting = true;
-    slider.classList.add("cursor-grabbing");
-    startX = (e.touches ? e.touches[0].pageX : e.pageX) - slider.offsetLeft;
-    scrollLeft = slider.scrollLeft;
-    stopAutoScroll();
-  };
+    const mouseLeave = () => {
+      isDown = false;
+      slider.classList.remove("cursor-grabbing");
+    };
 
-  const handleMove = (e) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = (e.touches ? e.touches[0].pageX : e.pageX) - slider.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    slider.scrollLeft = scrollLeft - walk;
-  };
+    const mouseUp = () => {
+      isDown = false;
+      slider.classList.remove("cursor-grabbing");
+    };
 
-  const handleEnd = () => {
-    isDown = false;
-    slider.classList.remove("cursor-grabbing");
-    setTimeout(() => {
-      isInteracting = false;
-    }, 1000); // Delay to prevent immediate resume
-    startAutoScroll();
-  };
-
-  const handleWheel = (e) => {
-    if (e.deltaY !== 0) {
+    const mouseMove = (e) => {
+      if (!isDown) return;
       e.preventDefault();
-      slider.scrollLeft += e.deltaY;
-      isInteracting = true;
-      stopAutoScroll();
-      setTimeout(() => {
-        isInteracting = false;
-        startAutoScroll();
-      }, 1000);
-    }
-  };
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      slider.scrollLeft = scrollLeft - walk;
+    };
 
-  // Add listeners
-  slider.addEventListener("mousedown", handleStart);
-  slider.addEventListener("touchstart", handleStart);
-  slider.addEventListener("mousemove", handleMove);
-  slider.addEventListener("touchmove", handleMove);
-  slider.addEventListener("mouseup", handleEnd);
-  slider.addEventListener("touchend", handleEnd);
-  slider.addEventListener("mouseleave", handleEnd);
-  slider.addEventListener("wheel", handleWheel, { passive: false });
+    const wheelScroll = (e) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        slider.scrollLeft += e.deltaY;
+      }
+    };
 
-  startAutoScroll();
+    slider.addEventListener("mousedown", mouseDown);
+    slider.addEventListener("mouseleave", mouseLeave);
+    slider.addEventListener("mouseup", mouseUp);
+    slider.addEventListener("mousemove", mouseMove);
+    slider.addEventListener("wheel", wheelScroll);
 
-  return () => {
-    stopAutoScroll();
-    slider.removeEventListener("mousedown", handleStart);
-    slider.removeEventListener("touchstart", handleStart);
-    slider.removeEventListener("mousemove", handleMove);
-    slider.removeEventListener("touchmove", handleMove);
-    slider.removeEventListener("mouseup", handleEnd);
-    slider.removeEventListener("touchend", handleEnd);
-    slider.removeEventListener("mouseleave", handleEnd);
-    slider.removeEventListener("wheel", handleWheel);
-  };
-}, []);
+    return () => {
+      clearInterval(interval);
+      slider.removeEventListener("mousedown", mouseDown);
+      slider.removeEventListener("mouseleave", mouseLeave);
+      slider.removeEventListener("mouseup", mouseUp);
+      slider.removeEventListener("mousemove", mouseMove);
+      slider.removeEventListener("wheel", wheelScroll);
+    };
+  }, []);
 
   return (
     <section id="pricing" className="relative text-[#E6EDF3] py-20 px-4 sm:px-6 overflow-hidden">
