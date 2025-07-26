@@ -1,12 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  content: [
+    './src/**/*.{js,jsx,ts,tsx}', 
+    './public/index.html'
+  ],
 
-  darkMode: 'class', // Enable dark mode via 'class'
+  darkMode: 'class', // Enables dark mode using a class toggle
 
   theme: {
     extend: {
-      // 🎨 Custom Colors
       colors: {
         background: '#0D1117',
         primary: '#58A6FF',
@@ -18,14 +20,12 @@ module.exports = {
         border: '#21262D',
       },
 
-      // 🔤 Font Families
       fontFamily: {
-        heading: ['Poppins', 'Space Grotesk', 'sans-serif'],
-        body: ['Inter', 'DM Sans', 'sans-serif'],
-        serif: ['Spectral', 'Times New Roman', 'serif'],
+        heading: ['"Space Grotesk"', 'Poppins', 'sans-serif'],
+        body: ['Inter', '"DM Sans"', 'sans-serif'],
+        serif: ['Spectral', '"Times New Roman"', 'serif'],
       },
 
-      // 🌫️ Box Shadows
       boxShadow: {
         neumorphic: '8px 8px 16px #0a0d12, -8px -8px 16px #10151c',
         soft: '0 2px 8px rgba(0, 0, 0, 0.15)',
@@ -33,13 +33,11 @@ module.exports = {
         none: 'none',
       },
 
-      // 🌀 Background Gradients
       backgroundImage: {
         'gradient-glow': 'linear-gradient(135deg, #58A6FF, #9B5DE5)',
         'radial-faint': 'radial-gradient(circle, rgba(88,166,255,0.15) 0%, transparent 80%)',
       },
 
-      // ⬜ Border Radius
       borderRadius: {
         sharp: '0.5rem',
         xl: '1rem',
@@ -47,7 +45,6 @@ module.exports = {
         '3xl': '2rem',
       },
 
-      // 📦 Container Settings
       container: {
         center: true,
         padding: '1rem',
@@ -60,7 +57,6 @@ module.exports = {
         },
       },
 
-      // ⚙️ Transition Utilities
       transitionProperty: {
         spacing: 'margin, padding',
         height: 'height',
@@ -81,5 +77,18 @@ module.exports = {
     require('@tailwindcss/typography'),
     require('@tailwindcss/aspect-ratio'),
     require('tailwindcss-animate'),
+
+    // ✅ Custom plugin to hide scrollbars
+    function ({ addUtilities }) {
+      addUtilities({
+        '.no-scrollbar': {
+          '-ms-overflow-style': 'none',     // IE and Edge
+          'scrollbar-width': 'none',        // Firefox
+          '&::-webkit-scrollbar': {
+            display: 'none',                // Chrome, Safari, Opera
+          },
+        },
+      })
+    },
   ],
-};
+}

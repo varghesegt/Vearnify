@@ -1,356 +1,322 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaCheckCircle,
+  FaHospital,
+  FaUtensils,
+  FaStore,
+  FaIndustry,
+  FaLaptopCode,
+  FaUserTie,
+  FaWhatsapp,
+  FaTshirt,
+  FaNetworkWired,
+} from "react-icons/fa";
 import pricingBg from "../assets/pricing.jpg";
-import { FaCheckCircle, FaCrown } from "react-icons/fa";
 
-const plans = [
+// Same businessSolutions array...
+const businessSolutions = [
   {
-    title: "Starter Site Essentials",
-    badge: "basic",
-    price: 9999,
-    original: 12999,
-    billing: "One-time (1 Year)",
-    tagline: "Ideal for students, freelancers & new creators launching online",
-    discountTag: "💸 Limited-Time Offer: Save 23%",
+    icon: <FaStore className="text-pink-400 text-2xl" />,
+    title: "Salons & Beauty Studios",
+    tagline: "Transform style into substance with a vibrant online identity.",
+    borderColor: "border-pink-400",
     features: [
-      "2-Page Website: Home + Contact/About",
-      "Clean, responsive layout for all devices",
-      "Direct WhatsApp/Call Integration",
-      "Social Media Links + Location Maps",
-      "3 Months of Expert Support",
+      "Service Showcase with Pricing",
+      "Before/After Gallery",
+      "WhatsApp Booking CTA",
+      "Client Testimonials",
+      "Team Introduction Cards",
+      "Smooth Animations & Effects",
     ],
-    wpMessage: "Hi! I'm interested in the Starter Site Essentials plan for ₹9,999.",
   },
   {
-    title: "Pro Presence Package",
-    badge: "premium",
-    price: 14999,
-    original: 19999,
-    billing: "One-time (1 Year)",
-    tagline: "Perfect for cafés, salons, consultants & local brands",
-    discountTag: "🧳 Save 25% Instantly",
+    icon: <FaHospital className="text-red-400 text-2xl" />,
+    title: "Clinics & Healthcare",
+    tagline: "Empower patient trust with clarity and convenience.",
+    borderColor: "border-red-400",
     features: [
-      "3 Pages: Home, Menu/Services, Contact",
-      "Branded QR Menu or Service PDF",
-      "One-click WhatsApp Orders/Appointments",
-      "Testimonials + Social Proof Section",
-      "6 Months Premium Support",
+      "Doctor Profiles & Timings",
+      "Health Packages Display",
+      "Direct WhatsApp Consultation",
+      "Service & Facility Highlights",
+      "FAQ Accordion",
+      "Emergency Contact Spotlight",
     ],
-    wpMessage: "Hi! I’d like to know more about the Pro Presence Package for ₹14,999.",
   },
   {
-    title: "Brand Builder Suite",
-    badge: "elite",
-    price: 29999,
-    original: 39999,
-    billing: "One-time (1 Year)",
-    tagline: "Designed for clinics, educators, restaurants & influencers",
-    discountTag: "🔥 Save ₹10,000 Today",
+    icon: <FaUtensils className="text-yellow-400 text-2xl" />,
+    title: "Cafes & Restaurants",
+    tagline: "Turn cravings into delightful digital experiences.",
+    borderColor: "border-yellow-400",
     features: [
-      "5 Pages: Home, About, Services, Reviews, Contact",
-      "Digital & Print-ready QR Brochure/Menu",
-      "Full SEO + Speed Optimization",
-      "Lead Capture Form (Email + Sheets)",
-      "1 Year Premium Support + 5 Free Content Updates",
-      "Custom Icons, Animations & Visuals",
-      "Premium Hosting + CDN",
-      "One-click Social Share Buttons",
+      "Interactive Digital Menu",
+      "Instagram Feed Display",
+      "Location with Google Maps",
+      "Promotions Carousel",
+      "Order Now CTA",
+      "Gallery of Signature Dishes",
     ],
-    wpMessage: "Hi! I'm ready to begin with the Brand Builder Suite for ₹29,999.",
   },
   {
-    title: "Launch Lite (Monthly)",
-    badge: "basic",
-    price: 1999,
-    original: 2999,
-    billing: "/month",
-    tagline: "A budget-friendly monthly plan for small starters",
-    discountTag: "🧠 Smart Launch: Save 33%",
+    icon: <FaStore className="text-orange-400 text-2xl" />,
+    title: "E-commerce Startups",
+    tagline: "Build cart-worthy experiences right from the homepage.",
+    borderColor: "border-orange-400",
     features: [
-      "3 Pages + Hosting + Domain",
-      "Fully Responsive Design",
-      "QR Menu / Product PDF Support",
-      "Basic Monthly Updates",
-      "WhatsApp Support (Business Hours)",
+      "Product Showcases with Tags",
+      "Filter & Category UI (Frontend)",
+      "Sale Offers / Badges",
+      "Testimonials Carousel",
+      "Animated Add to Cart Button",
+      "FAQ Section with Accordion",
     ],
-    wpMessage: "Hi! I want to get started with Launch Lite at ₹1,999/month.",
   },
   {
-    title: "Digital Growth Engine",
-    badge: "premium",
-    price: 3499,
-    original: 4999,
-    billing: "/month",
-    tagline: "Perfect for scaling brands with fast updates & optimizations",
-    discountTag: "📈 ₹1,500/mo Savings",
+    icon: <FaUserTie className="text-cyan-400 text-2xl" />,
+    title: "Coaching Institutes",
+    tagline: "Engage students with structured, informative layouts.",
+    borderColor: "border-cyan-400",
     features: [
-      "5 Pages + Live Menu via Google Sheets",
-      "Unlimited Monthly Content Updates",
-      "Fast Hosting + Custom Domain",
-      "SEO Ready (Meta, Speed, Structure)",
-      "Priority Response Support",
+      "Course Category Cards",
+      "Trainer/Faculty Profiles",
+      "WhatsApp Enquiry Button",
+      "Student Testimonials",
+      "Class Timetable Display",
+      "Gallery & Achievements",
     ],
-    wpMessage: "Hi! I'm interested in the Digital Growth Engine plan at ₹3,499/month.",
   },
   {
-    title: "Elite Partner Program",
-    badge: "elite",
-    price: 4999,
-    original: 6999,
-    billing: "/month",
-    tagline: "Complete monthly care: strategy, design, SEO & updates",
-    discountTag: "🚀 Save ₹2,000 Every Month",
+    icon: <FaLaptopCode className="text-green-400 text-2xl" />,
+    title: "Designers & Freelancers",
+    tagline: "Stand out with a polished portfolio that sells.",
+    borderColor: "border-green-400",
     features: [
-      "5 Premium Pages: Home, About, Services, Reviews, Contact",
-      "Digital & Printable Brochures / QR Menus",
-      "Full SEO + Core Web Speed Optimization",
-      "Integrated Lead Forms",
-      "1 Monthly Content Update + Priority Support",
-      "Custom UI Icons & Web Animations",
-      "Premium Hosting CDN",
-      "Social Media Share Links Included",
+      "Filterable Project Portfolio",
+      "Service Cards with Pricing",
+      "Testimonial Slider",
+      "Dribbble / Behance Links",
+      "Hire Me Button",
+      "Blog & Article Integration",
     ],
-    wpMessage:
-      "Hi! I’m ready to join the Elite Partner Program at ₹4,999/month.",
+  },
+  {
+    icon: <FaIndustry className="text-blue-400 text-2xl" />,
+    title: "Manufacturers & Industries",
+    tagline: "Highlight engineering excellence and capability.",
+    borderColor: "border-blue-400",
+    features: [
+      "Product Display Gallery",
+      "Certifications & Awards Section",
+      "Factory Tour Carousel",
+      "Client Logos Showcase",
+      "Case Studies / Use Cases",
+      "Download Brochure CTA",
+    ],
+  },
+  {
+    icon: <FaUserTie className="text-purple-400 text-2xl" />,
+    title: "Business Portfolios",
+    tagline: "Elevate professional credibility with structure.",
+    borderColor: "border-purple-400",
+    features: [
+      "Dynamic Hero Banner with CTA",
+      "Vision & Mission Highlights",
+      "Custom Icons for Services",
+      "Overview of Offerings",
+      "Quick CTA Anchors",
+      "Terms & Privacy Policy Pages",
+    ],
+  },
+  {
+    icon: <FaIndustry className="text-rose-400 text-2xl" />,
+    title: "Real Estate Agencies",
+    tagline: "Project your properties with immersive visuals.",
+    borderColor: "border-rose-400",
+    features: [
+      "Property Gallery Grid",
+      "Google Maps Integration",
+      "Instant WhatsApp Enquiry",
+      "Brochure Download Option",
+      "Project Highlights & Plans",
+      "Client Testimonials Section",
+    ],
+  },
+  {
+    icon: <FaHospital className="text-indigo-400 text-2xl" />,
+    title: "Colleges & Schools",
+    tagline: "Modern and informative academic showcases.",
+    borderColor: "border-indigo-400",
+    features: [
+      "Academic Program Overview",
+      "Faculty Profiles",
+      "Admissions CTA Button",
+      "Events & Announcements",
+      "Alumni Testimonials",
+      "Photo & Campus Tour Gallery",
+    ],
+  },
+  {
+    icon: <FaTshirt className="text-fuchsia-400 text-2xl" />,
+    title: "Boutiques & Textile Brands",
+    tagline: "Make every fabric click-worthy and fashionable.",
+    borderColor: "border-fuchsia-400",
+    features: [
+      "Lookbook Style Product Gallery",
+      "Seasonal Collections Highlight",
+      "Direct WhatsApp Enquiry CTA",
+      "Animated Size Chart",
+      "Client Photos & Testimonials",
+      "Shop Now Integration (Frontend)",
+    ],
+  },
+  {
+    icon: <FaNetworkWired className="text-lime-400 text-2xl" />,
+    title: "IT Service Providers",
+    tagline: "Position your tech with confidence.",
+    borderColor: "border-lime-400",
+    features: [
+      "Services Overview Section",
+      "Project Case Studies",
+      "Tech Stack Icons",
+      "Download Service Deck CTA",
+      "Testimonials & Partnerships",
+      "Pricing Cards (Frontend Only)",
+    ],
   },
 ];
 
-
-const addons = [
-  "Extra Page – ₹999",
-  "Custom Contact Form – ₹1,499",
-  "PDF Brochure/Menu – ₹1,499",
-  "Image Gallery/Carousel – ₹999",
-  "Multi-language Setup – ₹1,999",
-  "Booking or Lead Form Setup – ₹2,499",
-  "Full E-commerce Setup – ₹9,999+",
-  "Content Upload & Alignment – ₹1,499",
-];
-
-
-const getBadgeStyle = (type) => {
-  switch (type) {
-    case "basic":
-      return "bg-[#58A6FF]";
-    case "premium":
-      return "bg-[#9B5DE5]";
-    case "elite":
-      return "bg-gradient-to-r from-[#FF6EC4] to-[#9B5DE5]";
-    default:
-      return "bg-gray-500";
-  }
-};
+const ITEMS_PER_PAGE = 4;
 
 const Pricing = () => {
-  const whatsapp = "917871844464";
-  const sliderRef = useRef(null);
-  let index = 0;
+  const [currentPage, setCurrentPage] = useState(1);
 
- useEffect(() => {
-  const slider = sliderRef.current;
-  let scrollInterval;
-  let resumeTimeout;
-  let index = 0;
-  let isPaused = false;
+  const totalPages = Math.ceil(businessSolutions.length / ITEMS_PER_PAGE);
 
-  const getCardWidth = () => {
-    const firstCard = slider?.children?.[0];
-    return firstCard ? firstCard.offsetWidth + 24 : 0; // 24 = gap between cards
+  const currentItems = businessSolutions.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
-
-  const scrollToIndex = (i) => {
-    const cardWidth = getCardWidth();
-    slider.scrollTo({
-      left: i * cardWidth,
-      behavior: "smooth",
-    });
-  };
-
-  const startAutoScroll = () => {
-    scrollInterval = setInterval(() => {
-      if (!isPaused && slider) {
-        const cardWidth = getCardWidth();
-        const visibleCards = Math.floor(slider.offsetWidth / cardWidth);
-        const maxIndex = plans.length - visibleCards;
-        index = (index + 1) > maxIndex ? 0 : index + 1;
-        scrollToIndex(index);
-      }
-    }, 6000); // every 6s
-  };
-
-  const pauseAutoScroll = () => {
-    isPaused = true;
-    clearInterval(scrollInterval);
-    clearTimeout(resumeTimeout);
-
-    resumeTimeout = setTimeout(() => {
-      isPaused = false;
-      startAutoScroll();
-    }, 7000); // resume after 7s
-  };
-
-  // Start scrolling
-  startAutoScroll();
-
-  // 👉 Click or drag = pause auto scroll
-  const handleClick = () => pauseAutoScroll();
-  slider.addEventListener("click", handleClick);
-
-  // 👉 Drag scroll with perfect card alignment
-  let isDragging = false;
-  let startX = 0;
-  let scrollLeft = 0;
-
-  const onMouseDown = (e) => {
-    isDragging = true;
-    startX = e.pageX - slider.offsetLeft;
-    scrollLeft = slider.scrollLeft;
-    pauseAutoScroll();
-  };
-
-  const onMouseUp = () => {
-    if (!isDragging) return;
-    isDragging = false;
-
-    const cardWidth = getCardWidth();
-    const newIndex = Math.round(slider.scrollLeft / cardWidth);
-    index = newIndex;
-    scrollToIndex(newIndex); // snap to nearest card
-  };
-
-  const onMouseMove = (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - slider.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    slider.scrollLeft = scrollLeft - walk;
-  };
-
-  const onMouseLeave = () => {
-    if (isDragging) onMouseUp();
-    isDragging = false;
-  };
-
-  // 👉 Wheel scroll with smooth snapping
-  const onWheel = (e) => {
-    if (e.deltaY !== 0) {
-      e.preventDefault();
-      pauseAutoScroll();
-
-      const cardWidth = getCardWidth();
-      const direction = e.deltaY > 0 ? 1 : -1;
-      const visibleCards = Math.floor(slider.offsetWidth / cardWidth);
-      const maxIndex = plans.length - visibleCards;
-
-      index = Math.min(Math.max(index + direction, 0), maxIndex);
-      scrollToIndex(index);
-    }
-  };
-
-  // 👉 Add all listeners
-  slider.addEventListener("mousedown", onMouseDown);
-  slider.addEventListener("mousemove", onMouseMove);
-  slider.addEventListener("mouseup", onMouseUp);
-  slider.addEventListener("mouseleave", onMouseLeave);
-  slider.addEventListener("wheel", onWheel, { passive: false });
-
-  // ✅ Clean up
-  return () => {
-    clearInterval(scrollInterval);
-    clearTimeout(resumeTimeout);
-    slider.removeEventListener("click", handleClick);
-    slider.removeEventListener("mousedown", onMouseDown);
-    slider.removeEventListener("mousemove", onMouseMove);
-    slider.removeEventListener("mouseup", onMouseUp);
-    slider.removeEventListener("mouseleave", onMouseLeave);
-    slider.removeEventListener("wheel", onWheel);
-  };
-}, []);
-
-
 
   return (
-    <section id="pricing" className="relative text-[#E6EDF3] py-20 px-4 sm:px-6 overflow-hidden">
-      <img src={pricingBg} alt="Pricing Background" className="absolute inset-0 w-full h-full object-cover opacity-30 z-0" />
-      <div className="absolute inset-0 bg-[#0D1117]/10 backdrop-blur-sm z-0" />
-
-      <div className="relative z-10 max-w-7xl mx-auto text-center">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-transparent bg-gradient-to-r from-[#58A6FF] via-[#9B5DE5] to-[#FF6EC4] bg-clip-text">
-          Smart Plans. Real Results. Zero Guesswork.
-        </h2>
-        <p className="text-white mb-10 max-w-2xl mx-auto text-sm sm:text-base">
-          Select the perfect <span className="text-transparent bg-gradient-to-r from-[#58A6FF] to-[#9B5DE5] bg-clip-text font-semibold">website plan</span> to boost your business, convert leads, and go digital.
-        </p>
-
-        <div
-          ref={sliderRef}
-          className="flex gap-6 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide cursor-grab select-none"
-        >
-          {plans.map((plan, idx) => (
-            <div
-              key={idx}
-              className={`min-w-[90%] sm:min-w-[350px] flex flex-col justify-between h-[580px] sm:h-[600px] snap-center relative border rounded-2xl p-6 transition duration-1500 shadow-xl hover:shadow-blue-500/30 bg-[#808b9c00] backdrop-blur-md overflow-hidden ${
-                plan.badge === "elite" ? "border-[#FF6EC4] ring-2 ring-[#FF6EC4]" : "border-[#21262D]"
-              }`}
-            >
-              <div>
-                <div className={`absolute top-0 left-0 text-white text-xs font-semibold px-3 py-1 rounded-br-xl flex items-center gap-1 ${getBadgeStyle(plan.badge)}`}>
-                  {plan.badge === "elite" && <FaCrown className="text-yellow-300" />}
-                  {plan.badge.charAt(0).toUpperCase() + plan.badge.slice(1)}
-                </div>
-
-                <h3 className="text-lg sm:text-xl font-bold mb-1 text-white">{plan.title}</h3>
-                <p className="text-[#8B949E] mb-2 text-sm">{plan.tagline}</p>
-
-                <div className="flex flex-wrap items-center justify-center gap-2 mb-1">
-                  <span className="text-2xl font-bold text-white">₹{plan.price}</span>
-                  <span className="line-through text-[#8B949E] text-sm">₹{plan.original}</span>
-                  <span className="text-green-400 text-xs">{plan.billing}</span>
-                </div>
-
-                <span className="text-xs text-pink-400 font-semibold block mb-3">{plan.discountTag}</span>
-
-                <ul className="text-left space-y-2 text-sm mb-6">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-2">
-                      <FaCheckCircle className="text-[#58A6FF]" /> {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <a
-                href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(plan.wpMessage)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-auto inline-block w-full bg-gradient-to-r from-[#58A6FF] to-[#9B5DE5] text-white text-sm font-semibold py-2 rounded-xl transition hover:scale-105"
-              >
-                Get This Plan
-              </a>
-            </div>
-          ))}
+    <section
+      id="pricing"
+      className="relative py-20 px-4 sm:px-6 lg:px-12 text-[#E6EDF3] bg-cover bg-center"
+      style={{ backgroundImage: `url(${pricingBg})` }}
+    >
+      <div className="absolute inset-0 bg-[#0D1117]/90 backdrop-blur-sm z-0" />
+      <div className="relative z-10">
+        <div className="text-center mb-16 px-2">
+          <motion.h2
+            initial={{ opacity: 0, y: -30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[#58A6FF] via-[#9B5DE5] to-[#FF6EC7] text-transparent bg-clip-text"
+          >
+            Business-Specific Website Solutions
+          </motion.h2>
+          <p className="mt-4 text-white text-base sm:text-lg max-w-3xl mx-auto">
+            Tailored frontend features crafted for your industry. Boost
+            credibility, attract users, and convert better without the need for backend.
+          </p>
         </div>
 
-        {/* Add-ons Section */}
-        <div className="mt-20 max-w-4xl mx-auto">
-          <div className="bg-[#161B22]/10 backdrop-md border border-[#30363D] rounded-2xl shadow-xl p-8 text-left">
-            <h3 className="text-3xl font-extrabold text-center mb-4 text-transparent bg-gradient-to-r from-[#58A6FF] via-[#9B5DE5] to-[#FF6EC4] bg-clip-text">
-              🧩 Universal Add-ons
-            </h3>
-            <p className="text-white text-center text-base mb-8">
-              Add any of these <span className="text-transparent bg-gradient-to-r from-[#58A6FF] to-[#9B5DE5] bg-clip-text font-semibold">extras</span> to customize your website even further.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {addons.map((item, index) => (
-                <div
+        {/* Slide Cards with Pagination */}
+        <div className="pt-8">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentPage}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.4 }}
+              className="flex flex-wrap justify-center gap-6"
+            >
+              {currentItems.map((item, index) => (
+                <motion.div
                   key={index}
-                  className="flex items-center gap-3 p-4 bg-[#0D1117]/50 border border-[#21262D] rounded-xl shadow-inner hover:shadow-pink-500/20 transition"
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ duration: 0.4 }}
+                  className={`flex flex-col justify-between
+                    w-full sm:w-[45%] lg:w-[22%]
+                    p-5 md:p-6 rounded-3xl shadow-xl
+                    border-2 ${item.borderColor}
+                    bg-white/1 backdrop-md
+                    hover:ring-1 hover:ring-[#58A6FF]
+                    transition-all duration-300 ease-in-out`}
                 >
-                  <FaCheckCircle className="text-[#58A6FF] shrink-0" />
-                  <span className="text-[#E6EDF3]">{item}</span>
-                </div>
+                  <div>
+                    <div className="flex items-center gap-3 mb-2">
+                      {item.icon}
+                      <h3 className="text-lg md:text-xl font-semibold bg-gradient-to-r from-[#58A6FF] to-[#9B5DE5] text-transparent bg-clip-text">
+                        {item.title}
+                      </h3>
+                    </div>
+                    <p className="text-xs md:text-sm text-white mb-4 italic">
+                      {item.tagline}
+                    </p>
+                    <ul className="mt-4 space-y-3">
+                      {item.features.map((feature, i) => (
+                        <li
+                          key={i}
+                          className="flex items-start gap-2 text-xs md:text-sm text-white"
+                        >
+                          <FaCheckCircle className="text-green-400 mt-1 shrink-0" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <a
+                    href={`https://wa.me/917871844464?text=${encodeURIComponent(
+                      `Hi Vearnify! I’m interested in your ${item.title} plan. Please share details.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-6 inline-block w-full text-center bg-gradient-to-r from-[#58A6FF] via-[#9B5DE5] to-[#FF6EC7] text-white font-semibold py-2.5 md:py-3 rounded-xl transition-transform hover:scale-105 shadow-md"
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      <FaWhatsapp className="text-sm md:text-lg" />
+                      Get This Now
+                    </div>
+                  </a>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Pagination Buttons */}
+          <div className="mt-10 flex justify-center gap-3">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => handlePageChange(i + 1)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  currentPage === i + 1
+                    ? "bg-[#58A6FF] text-white"
+                    : "bg-white/10 text-[#E6EDF3] hover:bg-white/20"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
           </div>
+        </div>
+
+        <div className="mt-20 text-center text-sm text-white px-4">
+          Looking for something more custom?{" "}
+          <a
+            href="varghese.gt.dev@gmail.com"
+            className="text-[#58A6FF] hover:underline"
+          >
+            Contact us via email
+          </a>{" "}
+          let's turn your ideas into frontend reality.
         </div>
       </div>
     </section>

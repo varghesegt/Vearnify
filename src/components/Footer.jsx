@@ -43,7 +43,7 @@ const Footer = () => {
           <p className="text-[#8B949E] mb-2">
             Email:{' '}
             <a href="mailto:hello@vearnify.com" className="text-[#58A6FF] hover:underline">
-              hello@vearnify.com
+              varghese.gt.dev@gmail.com
             </a>
           </p>
           <p className="text-[#8B949E] mb-4">

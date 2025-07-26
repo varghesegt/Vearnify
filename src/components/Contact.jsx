@@ -35,7 +35,7 @@ const Contact = () => {
           <span className="bg-gradient-to-r from-[#58A6FF] to-[#9B5DE5] text-transparent bg-clip-text font-semibold">
             email
           </span>{" "}
-          — I’d love to hear from you!
+          I’d love to hear from you!
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -70,14 +70,14 @@ const Contact = () => {
           {/* Email */}
           <motion.a
             whileHover={{ scale: 1.05 }}
-            href="mailto:varghesegt@gmail.com?subject=Project%20Inquiry&body=Hi%20Varghese%2C%20I%20am%20interested%20in%20working%20with%20you..."
+            href="mailto:varghese.gt.dev@gmail.com?subject=Project%20Inquiry&body=Hi%20Varghese%2C%20I%20am%20interested%20in%20working%20with%20you..."
             className="flex flex-col items-center gap-2 p-6 bg-[#0D1117]/90 border border-[#21262D] hover:border-[#58A6FF] rounded-xl transition duration-300 text-center shadow-md hover:shadow-[#58A6FF]/40"
           >
             <FaEnvelope className="text-3xl text-[#58A6FF]" />
             <span className="text-lg font-semibold bg-gradient-to-r from-[#58A6FF] to-[#9B5DE5] text-transparent bg-clip-text">
               Email
             </span>
-            <span className="text-sm text-[#C9D1D9]">varghesegt@gmail.com</span>
+            <span className="text-sm text-[#C9D1D9]">varghese.gt.dev@gmail.com</span>
           </motion.a>
         </div>
 

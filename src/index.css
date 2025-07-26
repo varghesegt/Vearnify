@@ -2,10 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* -----------------------------------
-   🌐 Global Styling Enhancements
------------------------------------ */
-
+/* -------------------------------
+   🌐 Global Base Styling
+--------------------------------- */
 html {
   scroll-behavior: smooth;
   background-color: #0D1117;
@@ -18,93 +17,101 @@ body {
   overflow-x: hidden;
 }
 
-/* -----------------------------------
-   ✨ Text Selection (No Blue Highlight)
------------------------------------ */
+/* -------------------------------
+   ✨ Glassmorphic Input Styles
+--------------------------------- */
+.input {
+  @apply w-full px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ease-in-out outline-none;
 
-/* Chrome, Safari, Edge */
-/* Override all browser selection styles */
-::selection,
-::-moz-selection {
-  background-color: transparent !important;
-  color: inherit !important;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #E6EDF3;
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
-
-
-/* Firefox */
-::-moz-selection {
-  background-color: #ffffff !important;
-  color: #0D1117 !important;
+.input.glass-input {
+  @apply w-full px-4 py-3 bg-[#1F1F1F]/60 backdrop-blur-md text-white placeholder-white/70 rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#58A6FF] transition duration-200;
 }
 
-/* -----------------------------------
-   🔲 Focus Outline (Accessibility)
------------------------------------ */
+.input:focus {
+  border-color: #58A6FF;
+  box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* -------------------------------
+   ✂️ Text Selection
+--------------------------------- */
+::selection {
+  background-color: #58A6FF;
+  color: #0D1117;
+}
+::-moz-selection {
+  background-color: #58A6FF;
+  color: #0D1117;
+}
+
+/* -------------------------------
+   🧠 Focus Outline (Accessibility)
+--------------------------------- */
 :focus-visible {
-  outline: 2px solid #ff58cd;
+  outline: 2px solid #FF58CD;
   outline-offset: 2px;
   transition: outline 0.2s ease-in-out;
 }
 
-/* -----------------------------------
-   🖱️ Custom Scrollbar (Advanced)
------------------------------------ */
-
-/* Chrome/Edge/Opera */
+/* -------------------------------
+   🖱️ Custom Scrollbar
+--------------------------------- */
 ::-webkit-scrollbar {
   width: 10px;
   height: 8px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(135deg, #58A6FF, #9B5DE5);
   border-radius: 10px;
   transition: background 0.3s ease;
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #9B5DE5, #58A6FF);
 }
 
-/* 👇 Add this to your CSS */
+/* Hide Scrollbar Utility */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
-
 .scrollbar-hide {
-  -ms-overflow-style: none; /* IE/Edge */
-  scrollbar-width: none;    /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-
-/* Firefox */
+/* Firefox scrollbar */
 * {
   scrollbar-width: thin;
   scrollbar-color: #58A6FF transparent;
 }
 
-/* -----------------------------------
-   🔗 Link & Anchor Hover Effects
------------------------------------ */
+/* -------------------------------
+   🔗 Anchor Styling
+--------------------------------- */
 a {
   color: inherit;
   text-decoration: none;
   transition: all 0.3s ease;
 }
-
 a:hover {
   color: #58A6FF;
   filter: brightness(120%);
 }
 
-/* -----------------------------------
+/* -------------------------------
    🚀 Floating CTA Button
------------------------------------ */
+--------------------------------- */
 .floating-btn {
   background: linear-gradient(135deg, #58A6FF, #9B5DE5);
   color: #0D1117;
@@ -114,19 +121,75 @@ a:hover {
   box-shadow: 0 8px 30px rgba(88, 166, 255, 0.25);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .floating-btn:hover {
   transform: translateY(-3px) scale(1.03);
   box-shadow: 0 10px 40px rgba(155, 93, 229, 0.4);
 }
 
-/* -----------------------------------
-   🧘 Motion-Safe Fallbacks
------------------------------------ */
+/* -------------------------------
+   🧘 Accessibility: Motion Safe
+--------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* -------------------------------
+   🎚️ Gradient-Fill Range Slider
+--------------------------------- */
+input[type="range"].slider-track {
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background: #333; /* Fallback */
+  position: relative;
+  z-index: 1;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Track background gets overridden dynamically with inline style in JSX (see below) */
+input[type="range"].slider-track::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: transparent;
+}
+
+input[type="range"].slider-track::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: transparent;
+}
+
+/* Thumb styling - Chrome/Safari */
+input[type="range"].slider-track::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 18px;
+  width: 18px;
+  border-radius: 9999px;
+  background: white;
+  border: 3px solid #58A6FF;
+  box-shadow: 0 0 10px #58A6FF;
+  margin-top: -6px; /* Align thumb vertically */
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Thumb styling - Firefox */
+input[type="range"].slider-track::-moz-range-thumb {
+  height: 18px;
+  width: 18px;
+  border-radius: 9999px;
+  background: white;
+  border: 3px solid #58A6FF;
+  box-shadow: 0 0 10px #58A6FF;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
 }
